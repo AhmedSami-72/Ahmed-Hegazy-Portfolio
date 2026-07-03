@@ -1,11 +1,9 @@
-import cvPdfUrl from '../pdf/CV.pdf';
-
-export const CV = {
+window.CV = {
   settings: {
     whatsappNumber: '201091401017',
     email: 'email@example.com',
     linkedin: '#',
-    cvLink: cvPdfUrl
+    cvLink: 'assets/pdf/CV.pdf'
   },
   translations: {
     ar: {
