@@ -1,9 +1,18 @@
-import { CV } from '../assets/data/cv.js';
-
 document.addEventListener('DOMContentLoaded', () => {
+  const CV = window.CV;
+  if (!CV) {
+    console.error("CV data not found!");
+    return;
+  }
   const htmlTag = document.documentElement;
   const langBtn = document.getElementById('lang-switch');
-  let currentLang = localStorage.getItem('lang') || 'ar';
+  
+  let currentLang = 'ar';
+  try {
+    currentLang = localStorage.getItem('lang') || 'ar';
+  } catch (e) {
+    console.warn("localStorage not available");
+  }
 
   let scrollObserver;
   function initScrollObserver() {
@@ -36,7 +45,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Title and Meta
     document.title = `${CV.personal.name[currentLang]} | ${CV.personal.title[currentLang]}`;
-    document.querySelector('meta[name="description"]').setAttribute('content', `Portfolio of ${CV.personal.name[currentLang]}, ${CV.personal.title[currentLang]}. ${CV.personal.summary[currentLang]}`);
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) {
+      metaDesc.setAttribute('content', `Portfolio of ${CV.personal.name[currentLang]}, ${CV.personal.title[currentLang]}. ${CV.personal.summary[currentLang]}`);
+    }
 
     // Update translations
     document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -217,11 +229,17 @@ document.addEventListener('DOMContentLoaded', () => {
     initScrollObserver();
   }
 
-  langBtn.addEventListener('click', () => {
-    currentLang = currentLang === 'ar' ? 'en' : 'ar';
-    localStorage.setItem('lang', currentLang);
-    renderCV();
-  });
+  if (langBtn) {
+    langBtn.addEventListener('click', () => {
+      currentLang = currentLang === 'ar' ? 'en' : 'ar';
+      try {
+        localStorage.setItem('lang', currentLang);
+      } catch (e) {
+        console.warn("localStorage set failed");
+      }
+      renderCV();
+    });
+  }
 
   // Initial render
   renderCV();
@@ -232,10 +250,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const navLinks = document.querySelectorAll('.nav-link');
 
   window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-      header.classList.add('scrolled');
-    } else {
-      header.classList.remove('scrolled');
+    if (header) {
+      if (window.scrollY > 50) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
     }
 
     let current = '';
@@ -255,10 +275,12 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Scroll progress
     const scrollProgress = document.getElementById('scroll-progress');
-    const scrollPx = document.documentElement.scrollTop;
-    const winHeightPx = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-    const scrolled = `${scrollPx / winHeightPx * 100}%`;
-    scrollProgress.style.width = scrolled;
+    if (scrollProgress) {
+      const scrollPx = document.documentElement.scrollTop;
+      const winHeightPx = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = `${scrollPx / winHeightPx * 100}%`;
+      scrollProgress.style.width = scrolled;
+    }
   });
 
   // Smooth Scroll
@@ -305,10 +327,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // Back to top button
   const bttBtn = document.getElementById('back-to-top');
   window.addEventListener('scroll', () => {
-    if(window.scrollY > 500) {
-      bttBtn.classList.add('visible');
-    } else {
-      bttBtn.classList.remove('visible');
+    if (bttBtn) {
+      if(window.scrollY > 500) {
+        bttBtn.classList.add('visible');
+      } else {
+        bttBtn.classList.remove('visible');
+      }
     }
   });
   
